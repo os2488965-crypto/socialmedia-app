@@ -4,6 +4,8 @@ import { signupSchema, confirmEmailSchema, signInSchema, logoutSchema, loginWith
 import { validation } from "../../middleware/validation";
 import { Authentication } from "../../middleware/Authentication";
 import { TokenType } from "../../utils/token";
+import { Authorization } from "../../middleware/Authorization";
+import { RoleType } from "../../DB/model/user.model";
 
 const userRouter = Router();
 
@@ -20,6 +22,8 @@ userRouter.patch("/resetPassword", validation(resetPasswordSchema), US.resetPass
 // freeze / unfreeze account
 userRouter.delete("/freezeAccount/:userId", Authentication(TokenType.access), US.freezeAccount);
 userRouter.patch("/unfreezeAccount/:userId", Authentication(TokenType.access), US.unfreezeAccount);
-
-
+userRouter.get("/dashboard", Authentication(), Authorization({ accessRoles: [RoleType.admin, RoleType.superAdmin] }), US.dashBoard)
+userRouter.patch("/updateRole/:userId", Authentication(), Authorization({ accessRoles: [RoleType.admin, RoleType.superAdmin] }), US.updateRole)
+userRouter.post("/sendRequest/:userId", Authentication(), US.sendRequest)
+userRouter.patch("/acceptRequest/:requestId", Authentication(), US.acceptRequest)
 export default userRouter;

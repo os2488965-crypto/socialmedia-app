@@ -9,15 +9,14 @@ export enum GenderType {
 }
 
 export enum RoleType {
+  admin = "admin",
   user = "user",
-  admin = "admin"
+  superAdmin = "superAdmin"
 }
 
-
-export enum providerType{
-  system="system",
-  google="google"
-
+export enum ProviderType {
+  google = "google",
+  system = "system"
 }
 export interface Iuser {
   _id: Types.ObjectId;
@@ -29,7 +28,7 @@ export interface Iuser {
   age: number;
   phone?: string;
   image?:string;
-  provider:providerType;
+  provider:ProviderType;
   address?: string;
   gender: GenderType; // required
   otp?: string;
@@ -50,17 +49,17 @@ const userSchema = new mongoose.Schema<Iuser>({
   Lname: { type: String, trim: true },
   email: { type: String, unique: true, trim: true },
   password: { type: String ,trim:true,required:function(){
-    return this.provider===providerType.google?false:true;
+    return this.provider===ProviderType.google?false:true;
   }
 },
   age: { type: Number, min: 18, max: 60,required:function(){
-    return this.provider===providerType.google?false:true;
+    return this.provider===ProviderType.google?false:true;
   } },
   phone: { type: String },
   image:{type:String},
   address: { type: String },
   otp: { type: String }, // fixed
-  provider:{type:String,enum:providerType,default:providerType.system},
+  provider:{type:String,enum:ProviderType,default:ProviderType.system},
   confirmed: { type: Boolean, default: false },
   changeCredentials:{type:Date},
 deletedAt: { type: Date },
@@ -70,7 +69,7 @@ restoredAt: { type: Date },
 restoredBy: { type: Types.ObjectId, ref: "User" },
 
   gender: { type: String, enum: Object.values(GenderType),required:function(){
-    return this.provider===providerType.google?false:true;
+    return this.provider===ProviderType.google?false:true;
   }},
   role: { type: String, enum: Object.values(RoleType), default: RoleType.user },
 }, {
